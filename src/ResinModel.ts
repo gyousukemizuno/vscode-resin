@@ -39,6 +39,14 @@ export class ResinModel {
     this.save();
   }
 
+  delete(server: ResinServer): void {
+    const index = this.servers.findIndex((s:ResinServer) => server.installPath === s.installPath);
+    if (index > -1) {
+      this.servers.splice(index, 1);
+    }
+    this.save();
+  }
+
   private async save(): Promise<void> {
     await fse.outputJSONSync(this.serversJsonFile, this.servers.map((s: ResinServer) => {
       return { label: s.label, installPath: s.installPath };

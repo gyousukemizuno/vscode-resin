@@ -23,4 +23,11 @@ export class ResinServerController {
         const server = new ResinServer(serverName, installPath);
         this.model.add(server);
     }
+
+    async delete(server: ResinServer | undefined) {
+        if (!server) {
+            return;
+        }
+        this.model.delete(server);
+    }
 }

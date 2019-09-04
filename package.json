@@ -12,6 +12,7 @@
 	"activationEvents": [
 		"onView:resinServerExplorer",
 		"onCommand:resin.server.add",
+		"onCommand:resin.server.delete",
 		"onCommand:resin.tree.refresh"
 	],
 	"main": "./out/extension.js",
@@ -27,12 +28,22 @@
 		"commands": [
 			{
 				"command": "resin.server.add",
-				"title": "Add Resin Server",
+				"title": "Add",
 				"category": "Resin",
 				"icon": {
 					"dark": "resources/dark/add.svg",
 					"light": "resources/light/add.svg"
 				}
+			},
+			{
+				"command": "resin.server.delete",
+				"title": "Delete",
+				"category": "Resin"
+			},
+			{
+				"command": "resin.tree.refresh",
+				"title": "Refresh",
+				"category": "Resin"
 			}
 		],
 		"menus": {
@@ -46,6 +57,10 @@
 			"view/item/context": [
 				{
 					"command": "resin.server.add",
+					"when": "view == resinServerExplorer && !viewItem"
+				},
+				{
+					"command": "resin.server.delete",
 					"when": "view == resinServerExplorer && !viewItem"
 				}
 			]

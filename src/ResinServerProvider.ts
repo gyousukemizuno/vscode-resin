@@ -4,15 +4,14 @@ import { ResinModel } from "./ResinModel";
 
 export class ResinServerProvider implements vscode.TreeDataProvider<ResinServer> {
 
-    public eventEmitter: vscode.EventEmitter<vscode.TreeItem> = new vscode.EventEmitter<vscode.TreeItem>();
-    public readonly event: vscode.Event<vscode.TreeItem> = this.eventEmitter.event;
+    private _onDidChangeTreeData: vscode.EventEmitter<ResinServer | undefined> = new vscode.EventEmitter<ResinServer | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<ResinServer | undefined> = this._onDidChangeTreeData.event;
 
     constructor(private model: ResinModel) {
-        this.eventEmitter.fire();
     }
 
     public refresh(element: ResinServer|undefined): void {
-        this.eventEmitter.fire(element);
+        this._onDidChangeTreeData.fire(element);
     }
 
     getTreeItem(element: ResinServer): ResinServer {
@@ -24,6 +23,9 @@ export class ResinServerProvider implements vscode.TreeDataProvider<ResinServer>
             return this.model.getServers();
         }
         return [];
+    }
+
+    dispose(): void {
     }
 }
 
