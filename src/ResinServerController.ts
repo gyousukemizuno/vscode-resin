@@ -38,7 +38,7 @@ export class ResinServerController {
         if (!server) {
             return;
         }
-        const process: Promise<void> = this.execute('java', ['-version'], { shell: true });
+        const process: Promise<void> = this.execute('java', ['-jar', server.getResinJar(), '--verbose', 'console'], { shell: true });
         await process;
     }
 
@@ -46,7 +46,7 @@ export class ResinServerController {
         if (!server) {
             return;
         }
-        const process: Promise<void> = this.execute('java', ['-version'], { shell: true });
+        const process: Promise<void> = this.execute('java', ['-jar', server.getResinJar(), 'stop'], { shell: true });
         await process;
     }
 
@@ -54,7 +54,7 @@ export class ResinServerController {
         if (!server) {
             return;
         }
-        const process: Promise<void> = this.execute('java', ['-version'], { shell: true });
+        const process: Promise<void> = this.execute('java', ['-jar', server.getResinJar(), 'restart'], { shell: true });
         await process;
     }
 

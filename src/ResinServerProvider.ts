@@ -56,4 +56,8 @@ export class ResinServer extends vscode.TreeItem {
         const label = path.basename(resinRoot) + '/' + path.basename(installPath);
         return new ResinServer(label, resinRoot, installPath);
     }
+
+    getResinJar(): string {
+        return path.join(this.resinRoot, "lib/resin.jar");
+    }
 }
