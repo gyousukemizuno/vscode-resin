@@ -14,13 +14,9 @@ export class ResinModel {
   }
 
   private load(): void {
-    try {
-      const objs = fse.readJSONSync(this.serversJsonFile);
-      if (objs !== undefined) {
-        this.servers = this.servers.concat(objs.map((obj: { label: string, installPath: string }) => { return new ResinServer(obj.label, obj.installPath); }));
-      }
-    } catch (e) {
-      // ignore;
+    const objs = fse.readJSONSync(this.serversJsonFile);
+    if (objs !== undefined) {
+      this.servers = this.servers.concat(objs.map((obj: { label: string, resinRoot: string, installPath: string }) => { return new ResinServer(obj.label, obj.resinRoot, obj.installPath); }));
     }
   }
 
@@ -31,7 +27,7 @@ export class ResinModel {
    * @param server サーバー
    */
   add(server: ResinServer): void {
-    const index = this.servers.findIndex((s:ResinServer) => server.installPath === s.installPath);
+    const index = this.servers.findIndex((s: ResinServer) => server.installPath === s.installPath);
     if (index > -1) {
       this.servers.splice(index, 1);
     }
@@ -40,7 +36,7 @@ export class ResinModel {
   }
 
   delete(server: ResinServer): void {
-    const index = this.servers.findIndex((s:ResinServer) => server.installPath === s.installPath);
+    const index = this.servers.findIndex((s: ResinServer) => server.installPath === s.installPath);
     if (index > -1) {
       this.servers.splice(index, 1);
     }
@@ -49,7 +45,7 @@ export class ResinModel {
 
   private async save(): Promise<void> {
     await fse.outputJSONSync(this.serversJsonFile, this.servers.map((s: ResinServer) => {
-      return { label: s.label, installPath: s.installPath };
+      return { label: s.label, resinRoot: s.resinRoot, installPath: s.installPath };
     }));
     vscode.commands.executeCommand('resin.tree.refresh');
   }

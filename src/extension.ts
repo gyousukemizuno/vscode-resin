@@ -20,9 +20,19 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand('resin.server.delete', (server: ResinServer | undefined) => {
 		resinServerController.delete(server);
 	}));
+	context.subscriptions.push(vscode.commands.registerCommand('resin.server.start', (server: ResinServer | undefined) => {
+		resinServerController.start(server);
+	}));
+	context.subscriptions.push(vscode.commands.registerCommand('resin.server.stop', (server: ResinServer | undefined) => {
+		resinServerController.stop(server);
+	}));
+	context.subscriptions.push(vscode.commands.registerCommand('resin.server.restart', (server: ResinServer | undefined) => {
+		resinServerController.restart(server);
+	}));
 	context.subscriptions.push(vscode.commands.registerCommand('resin.tree.refresh', (server: ResinServer | undefined) => {
 		resinServerProvider.refresh(server);
 	}));
+
 }
 
 export function deactivate() { }

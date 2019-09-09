@@ -1,16 +1,19 @@
 import * as vscode from "vscode";
 import { ResinModel } from "./ResinModel";
+import * as fs from "fs";
+import * as path from "path";
+import { inherits } from "util";
 
 
 export class ResinServerProvider implements vscode.TreeDataProvider<ResinServer> {
 
     private _onDidChangeTreeData: vscode.EventEmitter<ResinServer | undefined> = new vscode.EventEmitter<ResinServer | undefined>();
-	readonly onDidChangeTreeData: vscode.Event<ResinServer | undefined> = this._onDidChangeTreeData.event;
+    readonly onDidChangeTreeData: vscode.Event<ResinServer | undefined> = this._onDidChangeTreeData.event;
 
     constructor(private model: ResinModel) {
     }
 
-    public refresh(element: ResinServer|undefined): void {
+    public refresh(element: ResinServer | undefined): void {
         this._onDidChangeTreeData.fire(element);
     }
 
@@ -30,7 +33,27 @@ export class ResinServerProvider implements vscode.TreeDataProvider<ResinServer>
 }
 
 export class ResinServer extends vscode.TreeItem {
-    constructor(public readonly label: string, public readonly installPath: string, public readonly collapsibleState: vscode.TreeItemCollapsibleState = vscode.TreeItemCollapsibleState.Expanded) {
+
+    /**
+     * Jar filename.
+     */
+    private jarFiles: string[] = [];
+
+    constructor(public readonly label: string, public readonly resinRoot: string, public readonly installPath: string, public readonly collapsibleState: vscode.TreeItemCollapsibleState = vscode.TreeItemCollapsibleState.Expanded) {
         super(label, collapsibleState);
+    }
+
+    static build(installPath: string): ResinServer {
+        const resinRoot = path.join(installPath, "../..");
+        const resinPath = path.join(resinRoot, "bin/resin.sh");
+        if (!fs.existsSync(resinPath)) {
+            throw new Error('resin.exe not found.');
+        }
+        const libPath = path.join(installPath, "WEB-INF/lib");
+        if (!fs.existsSync(libPath)) {
+            throw new Error('WEB-INF/lib directory not found.');
+        }
+        const label = path.basename(resinRoot) + '/' + path.basename(installPath);
+        return new ResinServer(label, resinRoot, installPath);
     }
 }

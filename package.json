@@ -13,6 +13,9 @@
 		"onView:resinServerExplorer",
 		"onCommand:resin.server.add",
 		"onCommand:resin.server.delete",
+		"onCommand:resin.server.start",
+		"onCommand:resin.server.stop",
+		"onCommand:resin.server.restart",
 		"onCommand:resin.tree.refresh"
 	],
 	"main": "./out/extension.js",
@@ -41,6 +44,21 @@
 				"category": "Resin"
 			},
 			{
+				"command": "resin.server.start",
+				"title": "Start",
+				"category": "Resin"
+			},
+			{
+				"command": "resin.server.stop",
+				"title": "Stop",
+				"category": "Resin"
+			},
+			{
+				"command": "resin.server.restart",
+				"title": "Restart",
+				"category": "Resin"
+			},
+			{
 				"command": "resin.tree.refresh",
 				"title": "Refresh",
 				"category": "Resin"
@@ -61,6 +79,18 @@
 				},
 				{
 					"command": "resin.server.delete",
+					"when": "view == resinServerExplorer && !viewItem"
+				},
+				{
+					"command": "resin.server.start",
+					"when": "view == resinServerExplorer && !viewItem"
+				},
+				{
+					"command": "resin.server.stop",
+					"when": "view == resinServerExplorer && !viewItem"
+				},
+				{
+					"command": "resin.server.restart",
 					"when": "view == resinServerExplorer && !viewItem"
 				}
 			]
