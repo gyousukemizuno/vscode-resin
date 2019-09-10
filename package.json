@@ -74,24 +74,16 @@
 			],
 			"view/item/context": [
 				{
-					"command": "resin.server.add",
-					"when": "view == resinServerExplorer && !viewItem"
-				},
-				{
-					"command": "resin.server.delete",
-					"when": "view == resinServerExplorer && !viewItem"
-				},
-				{
 					"command": "resin.server.start",
-					"when": "view == resinServerExplorer && !viewItem"
+					"when": "view == resinServerExplorer && viewItem == 'server'"
 				},
 				{
 					"command": "resin.server.stop",
-					"when": "view == resinServerExplorer && !viewItem"
+					"when": "view == resinServerExplorer && viewItem == 'server'"
 				},
 				{
 					"command": "resin.server.restart",
-					"when": "view == resinServerExplorer && !viewItem"
+					"when": "view == resinServerExplorer && viewItem == 'server'"
 				}
 			]
 		}

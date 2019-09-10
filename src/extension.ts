@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ResinServerProvider, ResinServer } from './ResinServerProvider';
+import { ResinServerProvider, ResinItem } from './ResinServerProvider';
 import { ResinServerController } from './ResinServerController';
 import { ResinModel } from './ResinModel';
 import * as os from "os";
@@ -17,19 +17,19 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand('resin.server.add', () => {
 		resinServerController.add();
 	}));
-	context.subscriptions.push(vscode.commands.registerCommand('resin.server.delete', (server: ResinServer | undefined) => {
+	context.subscriptions.push(vscode.commands.registerCommand('resin.server.delete', (server: ResinItem | undefined) => {
 		resinServerController.delete(server);
 	}));
-	context.subscriptions.push(vscode.commands.registerCommand('resin.server.start', (server: ResinServer | undefined) => {
+	context.subscriptions.push(vscode.commands.registerCommand('resin.server.start', (server: ResinItem | undefined) => {
 		resinServerController.start(server);
 	}));
-	context.subscriptions.push(vscode.commands.registerCommand('resin.server.stop', (server: ResinServer | undefined) => {
+	context.subscriptions.push(vscode.commands.registerCommand('resin.server.stop', (server: ResinItem | undefined) => {
 		resinServerController.stop(server);
 	}));
-	context.subscriptions.push(vscode.commands.registerCommand('resin.server.restart', (server: ResinServer | undefined) => {
+	context.subscriptions.push(vscode.commands.registerCommand('resin.server.restart', (server: ResinItem | undefined) => {
 		resinServerController.restart(server);
 	}));
-	context.subscriptions.push(vscode.commands.registerCommand('resin.tree.refresh', (server: ResinServer | undefined) => {
+	context.subscriptions.push(vscode.commands.registerCommand('resin.tree.refresh', (server: ResinItem | undefined) => {
 		resinServerProvider.refresh(server);
 	}));
 

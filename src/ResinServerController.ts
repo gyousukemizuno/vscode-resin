@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ResinServer } from "./ResinServerProvider";
+import { ResinItem } from "./ResinServerProvider";
 import * as path from "path";
 import { ResinModel } from './ResinModel';
 import * as child_process from "child_process";
@@ -12,7 +12,7 @@ export class ResinServerController {
         this.outputChannel = vscode.window.createOutputChannel('vscode-resin');
     }
 
-    async add(): Promise<ResinServer | undefined> {
+    async add(): Promise<ResinItem | undefined> {
         const uri = await vscode.window.showOpenDialog({
             defaultUri: vscode.workspace.rootPath ? vscode.Uri.file(vscode.workspace.rootPath) : undefined,
             canSelectFiles: false,
@@ -23,18 +23,18 @@ export class ResinServerController {
             return;
         }
         const installPath = uri[0].fsPath;
-        const server = ResinServer.build(installPath);
+        const server = ResinItem.buildServer(installPath);
         this.model.add(server);
     }
 
-    async delete(server: ResinServer | undefined) {
+    async delete(server: ResinItem | undefined) {
         if (!server) {
             return;
         }
         this.model.delete(server);
     }
 
-    async start(server: ResinServer | undefined) {
+    async start(server: ResinItem | undefined) {
         if (!server) {
             return;
         }
@@ -42,7 +42,7 @@ export class ResinServerController {
         await process;
     }
 
-    async stop(server: ResinServer | undefined) {
+    async stop(server: ResinItem | undefined) {
         if (!server) {
             return;
         }
@@ -50,7 +50,7 @@ export class ResinServerController {
         await process;
     }
 
-    async restart(server: ResinServer | undefined) {
+    async restart(server: ResinItem | undefined) {
         if (!server) {
             return;
         }

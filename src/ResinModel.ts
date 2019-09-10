@@ -1,11 +1,11 @@
-import { ResinServer } from "./ResinServerProvider";
+import { ResinItem } from "./ResinServerProvider";
 import * as path from "path";
 import * as fse from "fs-extra";
 import * as vscode from "vscode";
 
 export class ResinModel {
 
-  private servers: ResinServer[] = [];
+  private servers: ResinItem[] = [];
   private serversJsonFile: string = "";
 
   constructor(public storagePath: string) {
@@ -16,7 +16,9 @@ export class ResinModel {
   private load(): void {
     const objs = fse.readJSONSync(this.serversJsonFile);
     if (objs !== undefined) {
-      this.servers = this.servers.concat(objs.map((obj: { label: string, resinRoot: string, installPath: string }) => { return new ResinServer(obj.label, obj.resinRoot, obj.installPath); }));
+      this.servers = this.servers.concat(objs.map((obj: { type:string, label: string, resinRoot: string }) => {
+        return new ResinItem(obj.type, obj.label, obj.resinRoot);
+      }));
     }
   }
 
@@ -26,8 +28,8 @@ export class ResinModel {
    * 
    * @param server サーバー
    */
-  add(server: ResinServer): void {
-    const index = this.servers.findIndex((s: ResinServer) => server.installPath === s.installPath);
+  add(server: ResinItem): void {
+    const index = this.servers.findIndex((s: ResinItem) => server.resinRoot === s.resinRoot);
     if (index > -1) {
       this.servers.splice(index, 1);
     }
@@ -35,8 +37,8 @@ export class ResinModel {
     this.save();
   }
 
-  delete(server: ResinServer): void {
-    const index = this.servers.findIndex((s: ResinServer) => server.installPath === s.installPath);
+  delete(server: ResinItem): void {
+    const index = this.servers.findIndex((s: ResinItem) => server.resinRoot === s.resinRoot);
     if (index > -1) {
       this.servers.splice(index, 1);
     }
@@ -44,13 +46,13 @@ export class ResinModel {
   }
 
   private async save(): Promise<void> {
-    await fse.outputJSONSync(this.serversJsonFile, this.servers.map((s: ResinServer) => {
-      return { label: s.label, resinRoot: s.resinRoot, installPath: s.installPath };
+    await fse.outputJSONSync(this.serversJsonFile, this.servers.map((s: ResinItem) => {
+      return { type: s.contextValue, label: s.label, resinRoot: s.resinRoot };
     }));
     vscode.commands.executeCommand('resin.tree.refresh');
   }
 
-  getServers(): ResinServer[] {
+  getServers(): ResinItem[] {
     return this.servers;
   }
 }

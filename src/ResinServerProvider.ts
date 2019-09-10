@@ -2,28 +2,37 @@ import * as vscode from "vscode";
 import { ResinModel } from "./ResinModel";
 import * as fs from "fs";
 import * as path from "path";
-import { inherits } from "util";
 
+export class ResinServerProvider implements vscode.TreeDataProvider<ResinItem> {
 
-export class ResinServerProvider implements vscode.TreeDataProvider<ResinServer> {
-
-    private _onDidChangeTreeData: vscode.EventEmitter<ResinServer | undefined> = new vscode.EventEmitter<ResinServer | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<ResinServer | undefined> = this._onDidChangeTreeData.event;
+    private _onDidChangeTreeData: vscode.EventEmitter<ResinItem | undefined> = new vscode.EventEmitter<ResinItem | undefined>();
+    readonly onDidChangeTreeData: vscode.Event<ResinItem | undefined> = this._onDidChangeTreeData.event;
 
     constructor(private model: ResinModel) {
     }
 
-    public refresh(element: ResinServer | undefined): void {
+    public refresh(element: ResinItem | undefined): void {
         this._onDidChangeTreeData.fire(element);
     }
 
-    getTreeItem(element: ResinServer): ResinServer {
+    getTreeItem(element: ResinItem): ResinItem {
         return element;
     }
 
-    async getChildren(element?: ResinServer | undefined): Promise<ResinServer[]> {
+    async getChildren(element?: ResinItem | undefined): Promise<ResinItem[]> {
         if (!element) {
             return this.model.getServers();
+        }
+        if (element.contextValue === ResinItem.SERVER_TYPE) {
+            const webappsDir = path.join(element.resinRoot, 'webapps');
+            const dirs = fs.readdirSync(webappsDir);
+            const children: ResinItem[] = [];
+            dirs.forEach(dir => {
+                if (dir !== "ROOT") {
+                    children.push(ResinItem.buildContent(dir));
+                }
+            });
+            return children;
         }
         return [];
     }
@@ -32,32 +41,38 @@ export class ResinServerProvider implements vscode.TreeDataProvider<ResinServer>
     }
 }
 
-export class ResinServer extends vscode.TreeItem {
+export class ResinItem extends vscode.TreeItem {
 
-    /**
-     * Jar filename.
-     */
-    private jarFiles: string[] = [];
+    public static SERVER_TYPE = 'server';
+    public static CONTENT_TYPE = 'contet';
+    public static APPLICATION_TYPE = 'app';
 
-    constructor(public readonly label: string, public readonly resinRoot: string, public readonly installPath: string, public readonly collapsibleState: vscode.TreeItemCollapsibleState = vscode.TreeItemCollapsibleState.Expanded) {
+    constructor(public readonly contextValue: string,
+        public readonly label: string,
+        public readonly resinRoot: string,
+        public readonly collapsibleState: vscode.TreeItemCollapsibleState = vscode.TreeItemCollapsibleState.Expanded) {
         super(label, collapsibleState);
     }
 
-    static build(installPath: string): ResinServer {
-        const resinRoot = path.join(installPath, "../..");
+    static buildContent(root: string): ResinItem {
+        const label: string = path.basename(root);
+        return new ResinItem(ResinItem.CONTENT_TYPE, label, root, vscode.TreeItemCollapsibleState.Collapsed);
+    }
+
+    static buildServer(resinRoot: string): ResinItem {
         const resinPath = path.join(resinRoot, "bin/resin.sh");
         if (!fs.existsSync(resinPath)) {
             throw new Error('resin.exe not found.');
         }
-        const libPath = path.join(installPath, "WEB-INF/lib");
-        if (!fs.existsSync(libPath)) {
-            throw new Error('WEB-INF/lib directory not found.');
-        }
-        const label = path.basename(resinRoot) + '/' + path.basename(installPath);
-        return new ResinServer(label, resinRoot, installPath);
+        const label = path.basename(resinRoot);
+        return new ResinItem(ResinItem.SERVER_TYPE, label, resinRoot);
     }
 
     getResinJar(): string {
         return path.join(this.resinRoot, "lib/resin.jar");
+    }
+
+    isServer(): boolean {
+        return this.contextValue === ResinItem.SERVER_TYPE;
     }
 }
